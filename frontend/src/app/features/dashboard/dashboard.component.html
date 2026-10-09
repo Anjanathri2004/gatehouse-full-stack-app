@@ -1,0 +1,50 @@
+<main class="page">
+  <div class="page-head">
+    <div>
+      <h1>My access</h1>
+      <p class="muted">Both sections below load in parallel. Change the delays and reload to watch them arrive independently.</p>
+    </div>
+    <div class="delays">
+      <gh-delay-control label="Profile delay" [(value)]="profileDelay"></gh-delay-control>
+      <gh-delay-control label="Records delay" [(value)]="recordsDelay"></gh-delay-control>
+      <button class="btn primary" (click)="load()">Reload</button>
+    </div>
+  </div>
+
+  <section class="panel">
+    <header><h2>Profile</h2>
+      <span class="chip" *ngIf="(profile$ | async)?.ms !== undefined">loaded in {{ (profile$ | async)?.ms | timing }}</span></header>
+    <ng-container *ngIf="profile$ | async as p">
+      <div class="skeleton row" *ngIf="p.loading"><i></i><i></i><i></i><i></i></div>
+      <p class="alert" *ngIf="p.error">{{ p.error }}</p>
+      <dl class="profile" *ngIf="p.data as u">
+        <div><dt>Name</dt><dd>{{ u.name }}</dd></div>
+        <div><dt>User ID</dt><dd>{{ u.userId }}</dd></div>
+        <div><dt>Email</dt><dd>{{ u.email }}</dd></div>
+        <div><dt>Department</dt><dd>{{ u.department }}</dd></div>
+        <div><dt>Role</dt><dd>{{ u.role }}</dd></div>
+        <div><dt>Member since</dt><dd>{{ u.createdAt | date: 'mediumDate' }}</dd></div>
+      </dl>
+    </ng-container>
+  </section>
+
+  <section class="panel">
+    <header>
+      <h2>Records</h2>
+      <ng-container *ngIf="records$ | async as r">
+        <span class="chip" *ngIf="r.data">{{ r.data.visible }} of {{ r.data.total }} visible to you</span>
+        <span class="chip" *ngIf="r.ms !== undefined">loaded in {{ r.ms | timing }}</span>
+      </ng-container>
+      <mat-form-field class="search-field" appearance="outline"><mat-label>Filter records</mat-label><input matInput [formControl]="search"></mat-form-field>
+    </header>
+
+    <ng-container *ngIf="records$ | async as r">
+      <div class="skeleton table" *ngIf="r.loading"><i *ngFor="let n of [1,2,3,4,5]"></i></div>
+      <p class="alert" *ngIf="r.error">{{ r.error }}</p>
+      <ng-container *ngIf="r.data as d">
+        <gh-records-table [items]="d.items" [filter]="search.value"></gh-records-table>
+        <p class="note" *ngIf="d.visible < d.total">{{ d.total - d.visible }} more record(s) exist at the <b>admin</b> tier and are hidden from your role.</p>
+      </ng-container>
+    </ng-container>
+  </section>
+</main>

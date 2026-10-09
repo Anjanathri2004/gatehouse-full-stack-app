@@ -1,0 +1,42 @@
+<div class="scroll">
+  <table mat-table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="userId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>User ID</th>
+      <td mat-cell *matCellDef="let u"><a class="back" [routerLink]="['/admin/users', u.userId]">{{ u.userId }}</a></td>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let u">{{ u.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+      <td mat-cell *matCellDef="let u">{{ u.email }}</td>
+    </ng-container>
+    <ng-container matColumnDef="department">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Department</th>
+      <td mat-cell *matCellDef="let u">{{ u.department }}</td>
+    </ng-container>
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+      <td mat-cell *matCellDef="let u"><span class="role" [class.admin]="u.role === 'Admin'">{{ u.role }}</span></td>
+    </ng-container>
+    <ng-container matColumnDef="active">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+      <td mat-cell *matCellDef="let u"><span class="status" [ngClass]="u.active ? 'closed' : 'review'">{{ u.active ? 'Active' : 'Deactivated' }}</span></td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let u" class="row-actions">
+        <mat-spinner *ngIf="busyUser === u.userId; else idle" diameter="18"></mat-spinner>
+        <ng-template #idle>
+          <button mat-button color="primary" (click)="edit.emit(u)">Edit</button>
+          <button mat-button (click)="toggle.emit(u)" [disabled]="u.userId === currentUserId">{{ u.active ? 'Deactivate' : 'Activate' }}</button>
+          <button mat-button color="warn" (click)="remove.emit(u)" [disabled]="u.userId === currentUserId">Delete</button>
+        </ng-template>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns" [class.dim]="busyUser === row.userId"></tr>
+  </table>
+</div>
+<mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>

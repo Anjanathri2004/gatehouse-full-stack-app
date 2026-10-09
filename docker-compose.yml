@@ -1,0 +1,12 @@
+# Optional local databases for testing the storage backends.
+#   docker compose up -d
+# then in backend/.env set STORE=mongo  (MONGO_URI=mongodb://localhost:27017)
+#   or STORE=dynamo with DYNAMO_ENDPOINT=http://localhost:8000
+services:
+  mongo:
+    image: mongo:7
+    ports: ["27017:27017"]
+  dynamodb:
+    image: amazon/dynamodb-local
+    command: -jar DynamoDBLocal.jar -inMemory -sharedDb
+    ports: ["8000:8000"]

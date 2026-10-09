@@ -1,0 +1,42 @@
+<main class="login">
+  <section class="login-hero">
+    <h1>Gatehouse</h1>
+    <p>One sign-in. Three tiers of access. See exactly which records your role unlocks.</p>
+    <ul class="tiers">
+      <li><gh-access-badge level="public"></gh-access-badge> Everyone</li>
+      <li><gh-access-badge level="general"></gh-access-badge> Signed-in users</li>
+      <li><gh-access-badge level="admin"></gh-access-badge> Admins only</li>
+    </ul>
+  </section>
+
+  <section class="login-panel">
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <h2>Sign in</h2>
+
+      <fieldset class="seg">
+        <legend>Role</legend>
+        <label *ngFor="let r of roles" [class.on]="form.value.role === r">
+          <input type="radio" formControlName="role" [value]="r"> {{ r }}
+        </label>
+      </fieldset>
+
+      <label class="field">User ID
+        <input formControlName="userId" autocomplete="username" autofocus>
+        <em *ngIf="form.controls.userId.touched && form.controls.userId.invalid">Enter your user ID.</em>
+      </label>
+
+      <label class="field">Password
+        <input type="password" formControlName="password" autocomplete="current-password">
+        <em *ngIf="form.controls.password.touched && form.controls.password.invalid">Password must be at least 4 characters.</em>
+      </label>
+
+      <p class="alert" *ngIf="error" role="alert">{{ error }}</p>
+      <button class="btn primary wide" [disabled]="busy">{{ busy ? 'Signing in…' : 'Sign in' }}</button>
+
+      <div class="demo">
+        <span>Demo accounts</span>
+        <button type="button" class="btn ghost" *ngFor="let d of demo" (click)="fill(d)">{{ d.label }}</button>
+      </div>
+    </form>
+  </section>
+</main>
